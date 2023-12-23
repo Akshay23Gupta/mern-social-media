@@ -81,7 +81,7 @@ const MyPostWidget = ({ picturePath }) => {
           p="1rem"
         >
           <Dropzone
-            acceptedFiles=".jpg,.jpeg,.png"
+            acceptedFiles=".jpg,.jpeg,.png,.mp4"
             multiple={false}
             onDrop={(acceptedFiles) => setImage(acceptedFiles[0])}
           >
@@ -133,19 +133,34 @@ const MyPostWidget = ({ picturePath }) => {
 
         {isNonMobileScreens ? (
           <>
-            <FlexBetween gap="0.25rem">
+            <FlexBetween gap="0.25rem" onClick={() => setIsImage(!isImage)}>
               <GifBoxOutlined sx={{ color: mediumMain }} />
-              <Typography color={mediumMain}>Clip</Typography>
+              <Typography
+                color={mediumMain}
+                sx={{ "&:hover": { cursor: "pointer", color: medium } }}
+              >
+                Clip
+              </Typography>
             </FlexBetween>
 
-            <FlexBetween gap="0.25rem">
+            <FlexBetween gap="0.25rem" onClick={() => setIsImage(!isImage)}>
               <AttachFileOutlined sx={{ color: mediumMain }} />
-              <Typography color={mediumMain}>Attachment</Typography>
+              <Typography
+                color={mediumMain}
+                sx={{ "&:hover": { cursor: "pointer", color: medium } }}
+              >
+                Attachment
+              </Typography>
             </FlexBetween>
 
-            <FlexBetween gap="0.25rem">
+            <FlexBetween gap="0.25rem" onClick={() => setIsImage(!isImage)}>
               <MicOutlined sx={{ color: mediumMain }} />
-              <Typography color={mediumMain}>Audio</Typography>
+              <Typography
+                color={mediumMain}
+                sx={{ "&:hover": { cursor: "pointer", color: medium } }}
+              >
+                Audio
+              </Typography>
             </FlexBetween>
           </>
         ) : (

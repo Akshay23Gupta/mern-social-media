@@ -18,8 +18,7 @@ export const createPost = async (req, res) => {
       comments: [],
     });
     await newPost.save();
-
-    const post = await Post.find();
+    const post = await Post.find().sort({ createdAt: -1});
     res.status(201).json(post);
   } catch (err) {
     res.status(409).json({ message: err.message });
@@ -29,7 +28,7 @@ export const createPost = async (req, res) => {
 /* READ */
 export const getFeedPosts = async (req, res) => {
   try {
-    const post = await Post.find();
+    const post = await Post.find().sort({ createdAt: -1});
     res.status(200).json(post);
   } catch (err) {
     res.status(404).json({ message: err.message });
@@ -39,7 +38,7 @@ export const getFeedPosts = async (req, res) => {
 export const getUserPosts = async (req, res) => {
   try {
     const { userId } = req.params;
-    const post = await Post.find({ userId });
+    const post = await Post.find({ userId }).sort({ createdAt: -1});
     res.status(200).json(post);
   } catch (err) {
     res.status(404).json({ message: err.message });
@@ -63,6 +62,25 @@ export const likePost = async (req, res) => {
     const updatedPost = await Post.findByIdAndUpdate(
       id,
       { likes: post.likes },
+      { new: true }
+    );
+
+    res.status(200).json(updatedPost);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+};
+
+export const commentPost = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { comment } = req.body;
+    const post = await Post.findById(id);
+    var comments = post.comments;
+    comments.push(comment);
+    const updatedPost = await Post.findByIdAndUpdate(
+      id,
+      { comments: comments },
       { new: true }
     );
 

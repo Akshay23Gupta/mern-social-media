@@ -2,6 +2,7 @@ import {
   ChatBubbleOutlineOutlined,
   FavoriteBorderOutlined,
   FavoriteOutlined,
+  SendOutlined,
   ShareOutlined,
 } from "@mui/icons-material";
 import { Box, Divider, IconButton, Typography, useTheme } from "@mui/material";
@@ -29,6 +30,7 @@ const PostWidget = ({
   const loggedInUserId = useSelector((state) => state.user._id);
   const isLiked = Boolean(likes[loggedInUserId]);
   const likeCount = Object.keys(likes).length;
+  const [comment, setComment] = useState('');
 
   const { palette } = useTheme();
   const main = palette.neutral.main;
@@ -47,6 +49,23 @@ const PostWidget = ({
     dispatch(setPost({ post: updatedPost }));
   };
 
+  const patchComment = async () => {
+    const response = await fetch(`http://localhost:3001/posts/${postId}/comment`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ comment: comment }),
+    });
+    const updatedPost = await response.json();
+    dispatch(setPost({ post: updatedPost }));
+  }
+
+  const isVideo = (picturePath) => {
+    return picturePath.includes(".mp4");
+  }
+
   return (
     <WidgetWrapper m="2rem 0">
       <Friend
@@ -59,13 +78,22 @@ const PostWidget = ({
         {description}
       </Typography>
       {picturePath && (
-        <img
-          width="100%"
-          height="auto"
-          alt="post"
-          style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
-          src={`http://localhost:3001/assets/${picturePath}`}
-        />
+        isVideo(picturePath) ? (
+          <video
+            width="100%"
+            height="auto"
+            controls>
+            <source src={`http://localhost:3001/assets/${picturePath}`} type="video/mp4" />
+          </video>
+        ) : (
+          <img
+            width="100%"
+            height="auto"
+            alt="post"
+            style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
+            src={`http://localhost:3001/assets/${picturePath}`}
+          />
+        )
       )}
       <FlexBetween mt="0.25rem">
         <FlexBetween gap="1rem">
@@ -86,6 +114,10 @@ const PostWidget = ({
             </IconButton>
             <Typography>{comments.length}</Typography>
           </FlexBetween>
+          <input type="text" value={comment} onChange={event => setComment(event.target.value)} />
+          <IconButton onClick={patchComment}>
+            <SendOutlined />
+          </IconButton>
         </FlexBetween>
 
         <IconButton>
